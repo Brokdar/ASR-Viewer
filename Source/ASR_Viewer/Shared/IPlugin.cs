@@ -6,5 +6,6 @@ namespace Shared
     {
         string Name { get; }
         string Symbol { get; }
+        string View { get; }
     }
 }

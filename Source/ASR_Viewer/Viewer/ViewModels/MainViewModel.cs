@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Prism.Commands;
@@ -28,6 +27,8 @@ namespace Viewer.ViewModels
         public ObservableCollection<IPlugin> Plugins { get; } = new ObservableCollection<IPlugin>();
 
         public ICommand OpenCommand { get; }
+        public ICommand OptionItemClickedCommand { get; }
+        public ICommand NavigationItemClickedCommand { get; }
 
         public MainViewModel(RegistrationService registrationService, IRegionManager regionManager)
         {
@@ -36,10 +37,17 @@ namespace Viewer.ViewModels
 
             registrationService.NewRegistration += UpdatePluginList;
 
-            OpenCommand = new DelegateCommand(OpenNewDocument);
+            OpenCommand = new DelegateCommand(OnOpenClicked);
+            OptionItemClickedCommand = new DelegateCommand(OnOptionItemClicked);
+            NavigationItemClickedCommand = new DelegateCommand(OnNavigationItemClicked);
         }
 
-        private void OpenNewDocument()
+        private void UpdatePluginList(object sender, NewRegistrationArgs args)
+        {
+            Plugins.Add(args.Plugin);
+        }
+
+        private void OnOpenClicked()
         {
             var dialog = new OpenFileDialog
             {
@@ -53,9 +61,14 @@ namespace Viewer.ViewModels
             Title = BaseTitle + " | " + _document.Info.Path;
         }
 
-        private void UpdatePluginList(object sender, NewRegistrationArgs args)
+        private void OnOptionItemClicked()
         {
-            Plugins.Add(args.Plugin);
+            _regionManager.RequestNavigate("ModuleRegion", "Settings");
+        }
+
+        private void OnNavigationItemClicked()
+        {
+            _regionManager.RequestNavigate("ModuleRegion", "Overview");
         }
     }
 }

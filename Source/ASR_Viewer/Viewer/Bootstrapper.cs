@@ -4,7 +4,6 @@ using Prism.Unity;
 using Viewer.Views;
 using Microsoft.Practices.Unity;
 using Prism.Mvvm;
-using Prism.Regions;
 using Shared;
 using Viewer.ViewModels;
 
@@ -27,6 +26,7 @@ namespace Viewer
             base.ConfigureContainer();
 
             Container.RegisterType<IRegistrationService, RegistrationService>(new ContainerControlledLifetimeManager());
+            Container.RegisterTypeForNavigation<Settings>();
         }
 
         protected override void ConfigureViewModelLocator()

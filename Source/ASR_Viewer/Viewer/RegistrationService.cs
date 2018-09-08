@@ -22,7 +22,6 @@ namespace Viewer
         public void Register(IPlugin plugin, Type view)
         {
             _plugins.Add(plugin);
-            _regionManager.RegisterViewWithRegion("ModuleRegion", view);
             OnNewRegistration(plugin);
         }
 

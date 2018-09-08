@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using Prism.Regions;
 
 namespace Viewer.Views
 {
@@ -7,9 +7,12 @@ namespace Viewer.Views
     /// </summary>
     public partial class MainWindow
     {
-        public MainWindow()
+        public MainWindow(IRegionManager regionManager)
         {
             InitializeComponent();
+
+            RegionManager.SetRegionName(MainContent, "ModuleRegion");
+            RegionManager.SetRegionManager(MainContent, regionManager);
         }
     }
 }
