@@ -1,4 +1,6 @@
-﻿namespace Viewer.Views
+﻿using System.Windows;
+
+namespace Viewer.Views
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
