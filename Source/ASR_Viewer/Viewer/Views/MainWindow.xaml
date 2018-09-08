@@ -4,13 +4,23 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:shared="clr-namespace:Shared;assembly=Shared"
         xmlns:mvvm="http://prismlibrary.com/"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         mvvm:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="800" Width="1200">
-    
+        BorderThickness="0"
+        Title="{Binding Title}"
+        TitleCharacterCasing="Normal"
+        Height="800" 
+        Width="1200"
+        WindowStartupLocation="CenterScreen">
+
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <Button Content="Open" Command="{Binding OpenCommand}"/>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
+
     <!--
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
