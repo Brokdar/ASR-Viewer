@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Prism.Mvvm;
 using Prism.Regions;
 using Reader;
@@ -20,12 +19,7 @@ namespace Viewer.ViewModels
             set => SetProperty(ref _title, value);
         }
 
-        private ObservableCollection<IPlugin> _plugins;
-        public ObservableCollection<IPlugin> Plugins
-        {
-            get => _plugins;
-            set => SetProperty(ref _plugins, value);
-        }
+        public ObservableCollection<IPlugin> Plugins { get; } = new ObservableCollection<IPlugin>();
 
 
         public MainViewModel(RegistrationService registrationService, IRegionManager regionManager)
@@ -34,13 +28,11 @@ namespace Viewer.ViewModels
             _registrationService = registrationService;
 
             registrationService.NewRegistration += UpdatePluginList;
-
-            // Setup navigation items
         }
 
-        public void UpdatePluginList(object sender, EventArgs args)
+        private void UpdatePluginList(object sender, NewRegistrationArgs args)
         {
-            Plugins = new ObservableCollection<IPlugin>(_registrationService.Plugins);
+            Plugins.Add(args.Plugin);
         }
     }
 }

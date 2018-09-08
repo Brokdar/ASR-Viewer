@@ -9,10 +9,10 @@ namespace Viewer
     {
         private readonly IRegionManager _regionManager;
 
-        private readonly List<IPlugin> _plugins = new List<IPlugin>();
+        private readonly IList<IPlugin> _plugins = new List<IPlugin>();
         public IEnumerable<IPlugin> Plugins => _plugins;
 
-        public event EventHandler NewRegistration; 
+        public event EventHandler<NewRegistrationArgs> NewRegistration; 
 
         public RegistrationService(IRegionManager regionManager)
         {
@@ -23,12 +23,17 @@ namespace Viewer
         {
             _plugins.Add(plugin);
             _regionManager.RegisterViewWithRegion("ModuleRegion", view);
-            OnNewRegistration();
+            OnNewRegistration(plugin);
         }
 
-        protected virtual void OnNewRegistration()
+        protected virtual void OnNewRegistration(IPlugin plugin)
         {
-            NewRegistration?.Invoke(this, EventArgs.Empty);
+            NewRegistration?.Invoke(this, new NewRegistrationArgs {Plugin = plugin});
         }
+    }
+
+    public class NewRegistrationArgs : EventArgs
+    {
+        public IPlugin Plugin { get; set; }
     }
 }
