@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Prism.Commands;
@@ -23,7 +23,14 @@ namespace Viewer.ViewModels
             set => SetProperty(ref _title, value);
         }
 
-        public ObservableCollection<IPlugin> Plugins { get; } = new ObservableCollection<IPlugin>();
+        private readonly List<IPlugin> _plugins = new List<IPlugin>();
+
+        private IReadOnlyList<IPlugin> _readOnlyPlugins;
+        public IReadOnlyList<IPlugin> Plugins
+        {
+            get => _readOnlyPlugins;
+            set => SetProperty(ref _readOnlyPlugins, value);
+        }
 
         public ICommand OpenCommand { get; }
         public ICommand OptionItemClickedCommand { get; }
@@ -42,7 +49,7 @@ namespace Viewer.ViewModels
 
         private void UpdatePluginList(object sender, NewRegistrationArgs args)
         {
-            Plugins.Add(args.Plugin);
+            _plugins.Add(args.Plugin);
         }
 
         private void OnOpenClicked()
@@ -57,6 +64,7 @@ namespace Viewer.ViewModels
 
             _document = new AsrReader().Read(dialog.FileName);
             Title = BaseTitle + " | " + _document.Info.Path;
+            Plugins = _plugins;
         }
 
         private void OnOptionItemClicked()
