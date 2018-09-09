@@ -33,6 +33,7 @@ namespace Viewer
         {
             base.ConfigureViewModelLocator();
             ViewModelLocationProvider.Register<MainWindow, MainViewModel>();
+            ViewModelLocationProvider.Register<Settings, SettingsViewModel>();
         }
         
         protected override IModuleCatalog CreateModuleCatalog()

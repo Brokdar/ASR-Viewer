@@ -13,7 +13,6 @@ namespace Viewer.ViewModels
     public class MainViewModel : BindableBase
     {
         private readonly IRegionManager _regionManager;
-        private readonly IRegistrationService _registrationService;
         private Document _document;
 
         private const string BaseTitle = "ASR Viewer";
@@ -33,7 +32,6 @@ namespace Viewer.ViewModels
         public MainViewModel(RegistrationService registrationService, IRegionManager regionManager)
         {
             _regionManager = regionManager;
-            _registrationService = registrationService;
 
             registrationService.NewRegistration += UpdatePluginList;
 

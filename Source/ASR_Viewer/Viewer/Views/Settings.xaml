@@ -2,10 +2,51 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mvvm="http://prismlibrary.com/"
+             mc:Ignorable="d"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Green">
-        <TextBlock>I'm presenting the Settings!!</TextBlock>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0"
+                  Margin="5"
+                  Header="Theme">
+            <UniformGrid Rows="1">
+                <Button Content="Dark" Command="{Binding ChangeThemeCommand}" CommandParameter="BaseDark"/>
+                <Button Content="Light" Command="{Binding ChangeThemeCommand}" CommandParameter="BaseLight"/>
+            </UniformGrid>
+        </GroupBox>
+        
+        <GroupBox Grid.Row="1"
+                  Margin="5"
+                  Header="Accent Color">
+            <Grid>
+                <UniformGrid>
+                    <Button Content="Red" Background="#ea4333" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Red"/>
+                    <Button Content="Green" Background="#80ba45" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Green"/>
+                    <Button Content="Blue" Background="#41b1e1" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Blue"/>
+                    <Button Content="Purple" Background="#837ae5" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Purple"/>
+                    <Button Content="Orange" Background="#fb8633" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Orange"/>
+                    <Button Content="Lime" Background="#b6d033" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Lime"/>
+                    <Button Content="Emerald" Background="#33a133" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Emerald"/>
+                    <Button Content="Teal" Background="#33bcba" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Teal"/>
+                    <Button Content="Cobalt" Background="#3373f2" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Cobalt"/>
+                    <Button Content="Indigo" Background="#8833ff" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Indigo"/>
+                    <Button Content="Olive" Background="#8a9f83" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Olive"/>
+                    <Button Content="Magenta" Background="#e0338f" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Magenta"/>
+                    <Button Content="Amber" Background="#f3b53b" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Amber"/>
+                    <Button Content="Brown" Background="#9b7b56" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Brown"/>
+                    <Button Content="Steel" Background="#83919f" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Steel"/>
+                    <Button Content="Taupe" Background="#9f9471" Command="{Binding ChangeAccentColorCommand}" CommandParameter="Taupe"/>
+                </UniformGrid>
+            </Grid>
+        </GroupBox>
     </Grid>
 </UserControl>
