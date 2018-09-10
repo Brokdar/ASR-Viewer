@@ -27,12 +27,6 @@
                 <TextBlock Text="&quot;" Foreground="{StaticResource ArxmlMarkBrush}"/>
             </StackPanel>
         </DataTemplate>
-        
-        <DataTemplate x:Key="TextTemplate" DataType="{x:Type linq:XText}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Value}" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlValueBrush}"/>
-            </StackPanel>
-        </DataTemplate>
 
         <Style TargetType="{x:Type TreeViewItem}">
             <Setter Property="IsExpanded" Value="True"/>
@@ -42,28 +36,23 @@
                                   DataType="{x:Type linq:XElement}"
                                   ItemsSource="{Binding Elements}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="&lt;" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="start"/>
-                <TextBlock Text="{Binding Name.LocalName}" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlTagBrush}" x:Name="tag"/>
+                <TextBlock Text="&lt;" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="start"/>
+                <TextBlock Text="{Binding Name.LocalName}" Foreground="{StaticResource ArxmlTagBrush}" x:Name="tag"/>
                 <ItemsControl ItemTemplate="{StaticResource AttributeTemplate}"
-                              ItemsSource="{Binding Converter={StaticResource AttributeConverter}}"
-                              HorizontalAlignment="Center">
+                              ItemsSource="{Binding Converter={StaticResource AttributeConverter}}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-                <TextBlock Text="&gt;" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="end"/>
-                <TextBlock Text="{Binding Value}"/>
+                <TextBlock Text="&gt;" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="end"/>
+                <TextBlock x:Name="value" Visibility="Collapsed"/>
             </StackPanel>
             <HierarchicalDataTemplate.Triggers>
-                <DataTrigger Binding="{Binding XNodeType}" Value="XText">
-                    <Setter Property="Text" Value="{Binding InnerText}" TargetName="tag"/>
-                    <Setter Property="Foreground" Value="Blue" TargetName="tag"/>
-                    <Setter Property="Visibility" Value="Collapsed" TargetName="start"/>
-                    <Setter Property="Visibility" Value="Collapsed" TargetName="end"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding HasChildNodes}" Value="False">
+                <DataTrigger Binding="{Binding HasElements}" Value="False">
+                    <Setter Property="Text" Value="{Binding Value}" TargetName="value"/>
+                    <Setter Property="Visibility" Value="{Binding Visible}" TargetName="value"/>
                     <Setter Property="Text" Value="/&gt;" TargetName="end"/>
                 </DataTrigger>
             </HierarchicalDataTemplate.Triggers>
