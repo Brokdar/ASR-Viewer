@@ -3,22 +3,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BasicViews.Views"
              xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:asr="clr-namespace:Shared.ASR;assembly=Shared"
              mc:Ignorable="d" 
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800">
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        <TextBlock Grid.Column="1"
+                   Grid.Row="0"
+                   FontSize="18"
+                   HorizontalAlignment="Center">
+            <Run Text="AR-Packages" FontWeight="Bold"/>
+            <Run Text="[" FontStyle="Italic"/>
+            <Run Text="{Binding PackageCount}" FontStyle="Italic"/>
+            <Run Text="]" FontStyle="Italic"/>
+        </TextBlock>
+
         <ListView Grid.Column="1"
-                  Background="LightSteelBlue"
-                  Foreground="White"
+                  Grid.Row="1"
                   BorderBrush="DimGray"
-                  BorderThickness="2,0,0,0"/>
+                  BorderThickness="2,0,0,0"
+                  ItemsSource="{Binding Packages}"
+                  SelectedItem="{Binding SelectedPackage, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type asr:Package}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" 
+                                   Grid.Column="0" 
+                                   Grid.ColumnSpan="2" 
+                                   Text="{Binding Name}"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" 
+                                   Grid.Column="0" 
+                                   Text="UUID:"
+                                   Margin="0,0,4,0"
+                                   FontSize="11"
+                                   FontStyle="Italic"
+                                   FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text="{Binding Uuid}" 
+                                   FontStyle="Italic"
+                                   FontSize="11"
+                                   FontFamily="Consolas"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </UserControl>

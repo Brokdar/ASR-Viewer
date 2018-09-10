@@ -74,7 +74,8 @@ namespace Viewer.ViewModels
 
         private void OnNavigationItemClicked()
         {
-            _regionManager.RequestNavigate("ModuleRegion", "Overview");
+            var parameter = new NavigationParameters {{"Document", _document}};
+            _regionManager.RequestNavigate("ModuleRegion", "Overview", parameter);
         }
     }
 }
