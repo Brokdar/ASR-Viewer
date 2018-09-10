@@ -5,9 +5,70 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:asr="clr-namespace:Shared.ASR;assembly=Shared"
+             xmlns:linq="clr-namespace:System.Xml.Linq;assembly=System.Xml.Linq"
+             xmlns:converter="clr-namespace:BasicViews.Converter"
              mc:Ignorable="d" 
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <SolidColorBrush Color="blue" x:Key="ArxmlValueBrush"/>
+        <SolidColorBrush Color="Red" x:Key="ArxmlAttributeBrush"/>
+        <SolidColorBrush Color="DarkMagenta" x:Key="ArxmlTagBrush"/>
+        <SolidColorBrush Color="Blue" x:Key="ArxmlMarkBrush"/>
+        
+        <converter:XAttributeConverter x:Key="AttributeConverter"/>
+
+        <DataTemplate x:Key="AttributeTemplate" DataType="{x:Type linq:XAttribute}">
+            <StackPanel Orientation="Horizontal" Margin="4,0,0,0" HorizontalAlignment="Center">
+                <TextBlock Text="{Binding Name.LocalName}" Foreground="{StaticResource ArxmlAttributeBrush}"/>
+                <TextBlock Text="&quot;" Foreground="{StaticResource ArxmlMarkBrush}"/>
+                <TextBlock Text="{Binding Value}" Foreground="{StaticResource ArxmlValueBrush}"/>
+                <TextBlock Text="&quot;" Foreground="{StaticResource ArxmlMarkBrush}"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="TextTemplate" DataType="{x:Type linq:XText}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Value}" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlValueBrush}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type TreeViewItem}">
+            <Setter Property="IsExpanded" Value="True"/>
+        </Style>
+
+        <HierarchicalDataTemplate x:Key="TreeViewItem" 
+                                  DataType="{x:Type linq:XElement}"
+                                  ItemsSource="{Binding Elements}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&lt;" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="start"/>
+                <TextBlock Text="{Binding Name.LocalName}" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlTagBrush}" x:Name="tag"/>
+                <ItemsControl ItemTemplate="{StaticResource AttributeTemplate}"
+                              ItemsSource="{Binding Converter={StaticResource AttributeConverter}}"
+                              HorizontalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                <TextBlock Text="&gt;" HorizontalAlignment="Center" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="end"/>
+                <TextBlock Text="{Binding Value}"/>
+            </StackPanel>
+            <HierarchicalDataTemplate.Triggers>
+                <DataTrigger Binding="{Binding XNodeType}" Value="XText">
+                    <Setter Property="Text" Value="{Binding InnerText}" TargetName="tag"/>
+                    <Setter Property="Foreground" Value="Blue" TargetName="tag"/>
+                    <Setter Property="Visibility" Value="Collapsed" TargetName="start"/>
+                    <Setter Property="Visibility" Value="Collapsed" TargetName="end"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasChildNodes}" Value="False">
+                    <Setter Property="Text" Value="/&gt;" TargetName="end"/>
+                </DataTrigger>
+            </HierarchicalDataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,6 +79,13 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <TreeView Grid.Row="0"
+                  Grid.RowSpan="2"
+                  ItemTemplate="{StaticResource TreeViewItem}"
+                  ItemsSource="{Binding Arxml.Elements}"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"/>
 
         <TextBlock Grid.Column="1"
                    Grid.Row="0"
@@ -59,7 +127,6 @@
                                    Text="UUID:"
                                    Margin="0,0,4,0"
                                    FontSize="11"
-                                   FontStyle="Italic"
                                    FontFamily="Consolas"/>
                         <TextBlock Grid.Row="1"
                                    Grid.Column="1"
