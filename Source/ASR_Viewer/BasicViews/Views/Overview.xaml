@@ -6,7 +6,9 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:asr="clr-namespace:Shared.ASR;assembly=Shared"
              xmlns:linq="clr-namespace:System.Xml.Linq;assembly=System.Xml.Linq"
-             xmlns:converter="clr-namespace:BasicViews.Converter"
+             xmlns:viewModels="clr-namespace:BasicViews.ViewModels"
+             xmlns:behavior="clr-namespace:BasicViews.Behavior"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -16,8 +18,7 @@
         <SolidColorBrush Color="Red" x:Key="ArxmlAttributeBrush"/>
         <SolidColorBrush Color="DarkMagenta" x:Key="ArxmlTagBrush"/>
         <SolidColorBrush Color="Blue" x:Key="ArxmlMarkBrush"/>
-        
-        <converter:XAttributeConverter x:Key="AttributeConverter"/>
+        <SolidColorBrush Color="Black" x:Key="ArxmlContentBrush"/>
 
         <DataTemplate x:Key="AttributeTemplate" DataType="{x:Type linq:XAttribute}">
             <StackPanel Orientation="Horizontal" Margin="4,0,0,0" HorizontalAlignment="Center">
@@ -28,18 +29,14 @@
             </StackPanel>
         </DataTemplate>
 
-        <Style TargetType="{x:Type TreeViewItem}">
-            <Setter Property="IsExpanded" Value="True"/>
-        </Style>
-
         <HierarchicalDataTemplate x:Key="TreeViewItem" 
-                                  DataType="{x:Type linq:XElement}"
+                                  DataType="{x:Type viewModels:XElementViewModel}"
                                   ItemsSource="{Binding Elements}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="&lt;" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="start"/>
-                <TextBlock Text="{Binding Name.LocalName}" Foreground="{StaticResource ArxmlTagBrush}" x:Name="tag"/>
+                <TextBlock Text="&lt;" Foreground="{StaticResource ArxmlMarkBrush}"/>
+                <TextBlock Text="{Binding Name}" Foreground="{StaticResource ArxmlTagBrush}"/>
                 <ItemsControl ItemTemplate="{StaticResource AttributeTemplate}"
-                              ItemsSource="{Binding Converter={StaticResource AttributeConverter}}">
+                              ItemsSource="{Binding Attributes}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"/>
@@ -47,54 +44,67 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
                 <TextBlock Text="&gt;" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="end"/>
-                <TextBlock x:Name="value" Visibility="Collapsed"/>
+                <TextBlock Text="{Binding Value}" Foreground="{StaticResource ArxmlContentBrush}" Margin="4,0,0,0"/>
             </StackPanel>
             <HierarchicalDataTemplate.Triggers>
                 <DataTrigger Binding="{Binding HasElements}" Value="False">
-                    <Setter Property="Text" Value="{Binding Value}" TargetName="value"/>
-                    <Setter Property="Visibility" Value="{Binding Visible}" TargetName="value"/>
                     <Setter Property="Text" Value="/&gt;" TargetName="end"/>
                 </DataTrigger>
             </HierarchicalDataTemplate.Triggers>
         </HierarchicalDataTemplate>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Background="WhiteSmoke">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" MaxWidth="320"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TreeView Grid.Row="0"
-                  Grid.RowSpan="2"
+        <TreeView Grid.Row="0" Grid.RowSpan="2"
+                  Background="White"
                   ItemTemplate="{StaticResource TreeViewItem}"
-                  ItemsSource="{Binding Arxml.Elements}"
+                  ItemsSource="{Binding Root}"
                   VirtualizingStackPanel.IsVirtualizing="True"
-                  VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+                  VirtualizingStackPanel.ScrollUnit="Item"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"
+                  BorderBrush="DimGray"
+                  BorderThickness="0,0,2,0">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <!-- Setter binds a TreeViewItem to a XElementViewModel -->
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <i:Interaction.Behaviors>
+                <behavior:BringVirtualTreeViewItemIntoViewBehavior SelectedItem="{Binding SelectPathItem}" />
+            </i:Interaction.Behaviors>
+        </TreeView>
 
         <TextBlock Grid.Column="1"
                    Grid.Row="0"
                    FontSize="18"
-                   HorizontalAlignment="Center">
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" Margin="0,8,0,0">
             <Run Text="AR-Packages" FontWeight="Bold"/>
             <Run Text="[" FontStyle="Italic"/>
             <Run Text="{Binding PackageCount}" FontStyle="Italic"/>
             <Run Text="]" FontStyle="Italic"/>
         </TextBlock>
 
-        <ListView Grid.Column="1"
-                  Grid.Row="1"
-                  BorderBrush="DimGray"
-                  BorderThickness="2,0,0,0"
+        <ListView Grid.Column="1" Grid.Row="1"
                   ItemsSource="{Binding Packages}"
-                  SelectedItem="{Binding SelectedPackage, Mode=TwoWay}">
+                  SelectedItem="{Binding SelectedPackage, Mode=TwoWay}"
+                  Background="WhiteSmoke" 
+                  BorderThickness="0" 
+                  SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type asr:Package}">
-                    <Grid>
+                    <Grid Margin="12,4" >
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
@@ -116,16 +126,23 @@
                                    Text="UUID:"
                                    Margin="0,0,4,0"
                                    FontSize="11"
-                                   FontFamily="Consolas"/>
+                                   FontFamily="Consolas"
+                                   Foreground="Blue"/>
                         <TextBlock Grid.Row="1"
                                    Grid.Column="1"
                                    Text="{Binding Uuid}" 
                                    FontStyle="Italic"
                                    FontSize="11"
-                                   FontFamily="Consolas"/>
+                                   FontFamily="Consolas"
+                                   Foreground="Blue"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.Resources>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Background" Value="WhiteSmoke"/>
+                </Style>
+            </ListView.Resources>
         </ListView>
     </Grid>
 </UserControl>
