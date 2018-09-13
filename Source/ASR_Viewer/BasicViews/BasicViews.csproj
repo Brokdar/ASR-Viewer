@@ -71,10 +71,7 @@
   <ItemGroup>
     <Compile Include="BasicViewsModule.cs" />
     <Compile Include="Behavior\BringVirtualTreeViewItemIntoViewBehavior.cs" />
-<<<<<<< HEAD
-=======
     <Compile Include="Behavior\TreeViewSelectionChangedBehavior.cs" />
->>>>>>> 4ba75bc... Enable fast visiting of selected AR-Package in ARXML view
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\OverviewViewModel.cs" />
     <Compile Include="ViewModels\XElementViewModel.cs" />
