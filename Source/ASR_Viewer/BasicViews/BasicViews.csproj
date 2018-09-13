@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="BasicViewsModule.cs" />
     <Compile Include="Behavior\BringVirtualTreeViewItemIntoViewBehavior.cs" />
-    <Compile Include="Behavior\TreeViewSelectionChangedBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\OverviewViewModel.cs" />
     <Compile Include="ViewModels\XElementViewModel.cs" />
