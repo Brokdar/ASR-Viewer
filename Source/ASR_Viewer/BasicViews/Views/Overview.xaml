@@ -72,7 +72,9 @@
                   VirtualizingStackPanel.ScrollUnit="Item"
                   VirtualizingStackPanel.VirtualizationMode="Recycling"
                   BorderBrush="DimGray"
-                  BorderThickness="0,0,2,0">
+                  BorderThickness="0,0,2,0" 
+                  FontSize="14" 
+                  FontFamily="Segoe UI Semilight">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <!-- Setter binds a TreeViewItem to a XElementViewModel -->

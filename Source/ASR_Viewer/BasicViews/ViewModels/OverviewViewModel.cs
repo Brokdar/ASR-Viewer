@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using BasicViews.Services;
 using Prism.Mvvm;
 using Prism.Regions;
 using Shared.ASR;
@@ -55,7 +56,8 @@ namespace BasicViews.ViewModels
 
         private void SelectPackageElement(string uuid)
         {
-            var package = FindPackageElement(uuid);
+            var packages = XSearchService.FindElementByName(Root[0], "AR-PACKAGES");
+            var package = XSearchService.FindElementByAttribute(packages, "UUID", uuid);
 
             if (package == null)
                 return;
@@ -68,37 +70,9 @@ namespace BasicViews.ViewModels
                 element.IsExpanded = false;
             }
 
-            SelectPathItem = GetPathFromRootTo(package);
+            SelectPathItem = XSearchService.GetPathFromRootTo(package);
             package.IsExpanded = true;
             package.IsSelected = true;
-        }
-
-        private XElementViewModel FindPackageElement(string uuid)
-        {
-            var package = Root[0].Element("AR-PACKAGES");
-            foreach (var element in package.Elements)
-            {
-                var attribute = element.Attribute("UUID");
-                if (attribute != null && attribute.Value == uuid)
-                    return element;
-            }
-
-            return null;
-        }
-
-        private static XElementViewModel[] GetPathFromRootTo(XElementViewModel element)
-        {
-            var path = new List<XElementViewModel>{element};
-
-            while (element.Parent != null)
-            {
-                path.Add(element.Parent);
-                element = element.Parent;
-            }
-
-            path.Reverse();
-
-            return path.ToArray();
         }
 
         #region INavigationAware
