@@ -69,19 +69,20 @@ namespace BasicViews.Behavior
 
                 if (newParent == null)
                 {
-                    throw new InvalidOperationException("Tree view item cannot be found or created for node '" +
-                                                        node + "'");
+                    throw new InvalidOperationException("Tree view item cannot be found or created for node '" + node + "'");
                 }
 
                 if (node == newNode[newNode.Length - 1])
                 {
-                    var scroller = (ScrollViewer)FindVisualChildElement(tree, typeof(ScrollViewer));
-                    scroller.ScrollToBottom();
-
                     newParent.IsSelected = true;
-                    newParent.BringIntoView();
-                    newParent.Focus();
 
+                    if (GetScrollViewer(tree) is ScrollViewer scroller)
+                    {
+                        scroller.ScrollToBottom();
+                    }
+
+                    newParent.Focus();
+                    
                     break;
                 }
 
@@ -93,28 +94,19 @@ namespace BasicViews.Behavior
             }
         }
 
-        private static FrameworkElement FindVisualChildElement(DependencyObject element, Type childType)
+        private static DependencyObject GetScrollViewer(DependencyObject o)
         {
-            var count = VisualTreeHelper.GetChildrenCount(element);
+            if (o is ScrollViewer)
+                return o;
 
+            var count = VisualTreeHelper.GetChildrenCount(o);
             for (var i = 0; i < count; i++)
             {
-                var dependencyObject = VisualTreeHelper.GetChild(element, i);
-                var fe = (FrameworkElement)dependencyObject;
+                var child = VisualTreeHelper.GetChild(o, i);
 
-                if (fe.GetType() == childType)
-                {
-                    return fe;
-                }
-
-                var ret = fe.GetType() == typeof(ScrollViewer) ? 
-                    FindVisualChildElement((fe as ScrollViewer)?.Content as FrameworkElement, childType) : 
-                    FindVisualChildElement(fe, childType);
-
-                if (ret != null)
-                {
-                    return ret;
-                }
+                var result = GetScrollViewer(child);
+                if (result != null)
+                    return result;
             }
 
             return null;

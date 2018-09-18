@@ -74,15 +74,16 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TreeView Grid.Row="0" Grid.RowSpan="2"
+        <TreeView Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
                   Background="White"
                   ItemTemplate="{StaticResource TreeViewItem}"
                   ItemsSource="{Binding Root}"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   VirtualizingStackPanel.ScrollUnit="Item"
                   VirtualizingStackPanel.VirtualizationMode="Recycling"
+                  SnapsToDevicePixels="True"
                   BorderBrush="DimGray"
-                  BorderThickness="0,0,2,0" 
+                  BorderThickness="0,0,2,0"
                   FontSize="14" 
                   FontFamily="Segoe UI Semilight">
             <TreeView.ItemContainerStyle>
