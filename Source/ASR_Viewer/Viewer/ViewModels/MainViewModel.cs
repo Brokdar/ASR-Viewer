@@ -65,6 +65,8 @@ namespace Viewer.ViewModels
             _document = new AsrReader().Read(dialog.FileName);
             Title = BaseTitle + " | " + _document.Info.Path;
             Plugins = _plugins;
+
+            OnNavigationItemClicked();
         }
 
         private void OnOptionItemClicked()

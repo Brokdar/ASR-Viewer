@@ -50,29 +50,51 @@ namespace BasicViews.ViewModels
             set
             {
                 SetProperty(ref _selectedPackage, value);
-                SelectPackageElement(value.Uuid);
+                if(_selectedPackage != null)
+                    SelectPackageElement(value.Uuid);
             }
         }
 
         private void SelectPackageElement(string uuid)
         {
             var packages = XSearchService.FindElementByName(Root[0], "AR-PACKAGES");
-            var package = XSearchService.FindElementByAttribute(packages, "UUID", uuid);
+            var package = XSearchService.FindElementByUuid(packages, uuid);
 
-            if (package == null)
-                return;
+            NavigateTo(package);
+        }
 
+        private void NavigateTo(XElementViewModel element)
+        {
+            if (element == null) return;
+            
+            //CloseAllExpandedPackages();
+
+            SelectPathItem = XSearchService.GetPathFromRootTo(element);
+            element.IsExpanded = true;
+            element.IsSelected = true;
+        }
+
+        private void CloseAllExpandedPackages()
+        {
             var elements = Root[0].Elements;
             elements[0].IsExpanded = false;
 
-            foreach (var element in elements[1].Elements)
+            foreach (var e in elements[1].Elements)
             {
-                element.IsExpanded = false;
+                e.IsExpanded = false;
             }
+        }
 
-            SelectPathItem = XSearchService.GetPathFromRootTo(package);
-            package.IsExpanded = true;
-            package.IsSelected = true;
+        public void NavigateToReference(string uri)
+        {
+            if (string.IsNullOrEmpty(uri)) return;
+
+            var packages = XSearchService.FindElementByName(Root[0], "AR-PACKAGES");
+            var element = XSearchService.FindElementByUri(packages, uri);
+
+            SelectedPackage = null;
+
+            NavigateTo(element);
         }
 
         #region INavigationAware

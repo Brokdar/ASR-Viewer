@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -43,6 +43,13 @@ namespace BasicViews.ViewModels
             } 
         }
 
+        private bool _isReference;
+        public bool IsReference
+        {
+            get => _isReference;
+            set => SetProperty(ref _isReference, value);
+        }
+
         public XElementViewModel(XElement element, XElementViewModel parent = null)
         {
             _element = element;
@@ -54,6 +61,11 @@ namespace BasicViews.ViewModels
                     (from child in _element.Elements()
                      select new XElementViewModel(child, this)).ToList()
                 );
+
+            if (!element.HasElements && Name.EndsWith("REF"))
+            {
+                IsReference = true;
+            }
         }
 
         public XElementViewModel Element(string name)

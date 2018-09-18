@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BasicViews.ViewModels;
 
 namespace BasicViews.Services
@@ -10,30 +11,98 @@ namespace BasicViews.Services
             if (source.Name == name)
                 return source;
 
-            foreach (var element in source.Elements)
+            var queue = new Queue<XElementViewModel>();
+            queue.Enqueue(source);
+
+            while (queue.Count > 0)
             {
-                var result = FindElementByName(element, name);
-                if (result != null)
-                    return result;
+                var element = queue.Dequeue();
+
+                if (element.Name == name)
+                    return element;
+
+                foreach (var e in element.Elements)
+                {
+                    queue.Enqueue(e);
+                }
             }
 
             return null;
         }
 
-        public static XElementViewModel FindElementByAttribute(XElementViewModel source, string attribute, string value)
+        public static XElementViewModel FindElementByUuid(XElementViewModel source, string uuid)
         {
-            var xAttribute = source.Attribute(attribute);
-            if (xAttribute != null && xAttribute.Value == value)
+            if (ContainsAttributeOfValue(source, "UUID", uuid))
                 return source;
 
-            foreach (var element in source.Elements)
+            var queue = new Queue<XElementViewModel>();
+            queue.Enqueue(source);
+
+            while (queue.Count > 0)
             {
-                var result = FindElementByAttribute(element, attribute, value);
-                if (result != null)
-                    return result;
+                var element = queue.Dequeue();
+
+                if (ContainsAttributeOfValue(element, "UUID", uuid))
+                    return element;
+
+                foreach (var e in element.Elements)
+                {
+                    queue.Enqueue(e);
+                }
             }
 
             return null;
+        }
+
+        private static bool ContainsAttributeOfValue(XElementViewModel element, string attribute, string value)
+        {
+            var xAttribute = element.Attribute(attribute);
+            return xAttribute != null && xAttribute.Value == value;
+        }
+
+        public static XElementViewModel FindElementByValue(XElementViewModel source, string value)
+        {
+            if (source.Value == value)
+                return source;
+
+            var queue = new Queue<XElementViewModel>();
+            queue.Enqueue(source);
+
+            while (queue.Count > 0)
+            {
+                var element = queue.Dequeue();
+
+                if (element.Value == value)
+                    return element;
+
+                foreach (var e in element.Elements)
+                {
+                    queue.Enqueue(e);
+                }
+            }
+
+            return null;
+        }
+
+        public static XElementViewModel FindElementByUri(XElementViewModel source, string uri)
+        {
+            if (uri.StartsWith("/"))
+                uri = uri.TrimStart('/');
+
+            var path = uri.Split('/');
+
+            var node = source;
+            for (var i = 0; i < path.Length - 1; i++)
+            {
+                node = FindElementByValue(node, path[i]);
+                if (node == null)
+                    return null;
+                node = node.Parent;
+            }
+
+            node = FindElementByValue(node, path.Last());
+
+            return node?.Parent;
         }
 
         public static XElementViewModel[] GetPathFromRootTo(XElementViewModel element)

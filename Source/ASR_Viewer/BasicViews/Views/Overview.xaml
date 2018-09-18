@@ -44,11 +44,21 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
                 <TextBlock Text="&gt;" Foreground="{StaticResource ArxmlMarkBrush}" x:Name="end"/>
-                <TextBlock Text="{Binding Value}" Foreground="{StaticResource ArxmlContentBrush}" Margin="4,0,0,0"/>
+                <TextBlock Foreground="{StaticResource ArxmlContentBrush}" Margin="4,0,0,0" x:Name="value">
+                    <Hyperlink Click="Hyperlink_OnClick">
+                        <TextBlock x:Name="link"/>
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
             <HierarchicalDataTemplate.Triggers>
                 <DataTrigger Binding="{Binding HasElements}" Value="False">
                     <Setter Property="Text" Value="/&gt;" TargetName="end"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsReference}" Value="True">
+                    <Setter Property="Text" Value="{Binding Value}" TargetName="link"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsReference}" Value="False">
+                    <Setter Property="Text" Value="{Binding Value}" TargetName="value"/>
                 </DataTrigger>
             </HierarchicalDataTemplate.Triggers>
         </HierarchicalDataTemplate>
@@ -93,9 +103,9 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center" Margin="0,8,0,0">
             <Run Text="AR-Packages" FontWeight="Bold"/>
-            <Run Text="[" FontStyle="Italic"/>
-            <Run Text="{Binding PackageCount}" FontStyle="Italic"/>
-            <Run Text="]" FontStyle="Italic"/>
+            <Run Text="{}{" FontStyle="Italic"/>
+            <Run Text="{Binding PackageCount}" FontStyle="Italic" FontSize="16"/>
+            <Run Text="}" FontStyle="Italic"/>
         </TextBlock>
 
         <ListView Grid.Column="1" Grid.Row="1"
